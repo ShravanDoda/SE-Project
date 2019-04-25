@@ -70,7 +70,7 @@ class createAlbumEdge:
         )
 
     def create_artist_edge(self):
-        query = 'MATCH (a:album), (ar:artist) WHERE a.name="%s" AND ar.name="%s" CREATE (a)-[:albumby]->(t)' %(self.album, self.artist)
+        query = 'MATCH (a:album), (ar:artist) WHERE a.name="%s" AND ar.name="%s" CREATE (a)-[:albumby]->(ar)' %(self.album, self.artist)
         self.redis_connection.execute_command(
             'GRAPH.QUERY',
             'spotify',

@@ -34,6 +34,42 @@ class queryFacade:
         process_result_set(result)
         result.pretty_print()
 
+    def get_tracks_by_artist(self, artist_name):
+        query = 'MATCH (track:track)-[:performedby]->(:artist {name:"%s"}) RETURN track.name' %(artist_name)
+        result = self.graph.query(query)
+        process_result_set(result)
+        result.pretty_print()
+
+    def get_tracks_by_album(self, album_name):
+        query = 'MATCH (track:track)-[:belongsto]->(:album {name:"%s"}) RETURN track.name, track.length, track.uri' %(album_name)
+        result = self.graph.query(query)
+        process_result_set(result)
+        result.pretty_print()
+
+    def get_albums_by_artist(self, artist_name):
+        query = 'MATCH (album:album)-[:albumby]->(:artist {name: "%s"}) RETURN album.name' %(artist_name)
+        result = self.graph.query(query)
+        process_result_set(result)
+        result.pretty_print()
+
+    def get_artist_by_album(self, album_name):
+        query = 'MATCH (artist:artist)-[:hasalbum]->(:album {name:"%s"}) RETURN artist.name' %(album_name)
+        result = self.graph.query(query)
+        process_result_set(result)
+        result.pretty_print()
+
+    def get_album_by_track(self, track_name):
+        query = 'MATCH (album:album)-[:containstrack]->(:track {name:"%s"}) RETURN album.name' %(track_name)
+        result = self.graph.query(query)
+        process_result_set(result)
+        result.pretty_print()
+
+    def get_artist_by_track(self, track_name):
+        query = 'MATCH (artist:artist)-[:hastrack]->(:track {name:"%s"}) RETURN artist.name' %(track_name)
+        result = self.graph.query(query)
+        process_result_set(result)
+        result.pretty_print()
+
     def get_album_art_url_from_track(self, track_name):
         query = 'MATCH (album:album)-[:containstrack]->(:track {name:"%s"}) RETURN album.art_url' %(track_name)
         result = self.graph.query(query)
@@ -81,29 +117,53 @@ class Update:
         self.updateTrackEdges()
         self.updateArtistEdges()
         self.updateAlbumEdges()
-        
+
 
 def help():
     print("Fetch all song metadata - GET songs")
     print("Fetch all album metadata - GET albums")
     print("Fetch all artist metadata - GET artist")
-    print("Fetch all <a>, <b> metadata - GET <a> <b>")
-
+    print("Fetch all songs by artist - GET tracks by artist")
+    print("Fetch all songs by album - GET tracks by album")
+    print("Fetch album by track - GET album by track")
+    print("Fetch artist by track - GET artist by track")
+    print("Fetch all albums by an artist - GET albums by artist")
+    print("Fetch artist by album - GET artist by album")
 
 def driver_func(inp):
-    if inp.strip() == "GET songs":
+    if inp.strip().lower() == "get songs":
         queryFacade().get_songs()
-    elif inp.strip() == "GET artists":
+    elif inp.strip().lower() == "get artists":
         queryFacade().get_artists()
-    elif inp.strip() == "GET albums":
+    elif inp.strip().lower() == "get albums":
         queryFacade().get_albums()
-    elif inp.strip() == "OPEN album art":
-        track_name = input(">>> Enter Track name: ")
+    elif inp.strip().lower() == "open album art":
+        track_name = input(">>> Enter Track Name: ")
         queryFacade().get_album_art_url_from_track(track_name)
+    elif inp.strip().lower() == "get tracks by artist":
+        artist_name = input(">>> Enter Artist Name: ")
+        queryFacade().get_tracks_by_artist(artist_name)
+    elif inp.strip().lower() == "get tracks by album":
+        album_name = input(">>> Enter Album Name: ")
+        queryFacade().get_tracks_by_album(album_name)
+    elif inp.strip().lower() == "get albums by artist":
+        artist_name = input(">>> Enter Artist Name: ")
+        queryFacade().get_albums_by_artist(artist_name)
+    elif inp.strip().lower() == "get artist by album":
+        album_name = input(">>> Enter Album Name: ")
+        queryFacade().get_artist_by_album(album_name)
+    elif inp.strip().lower() == "get artist by track":
+        track_name = input(">>> Enter Track Name: ")
+        queryFacade().get_artist_by_track(track_name)
+    elif inp.strip().lower() == "get album by track":
+        track_name = input(">>> Enter Track Name: ")
+        queryFacade().get_album_by_track(track_name)
     elif inp.strip() == "update":
         update_obj = Update()
         update_obj.update_all_nodes()
         update_obj.update_all_edges()
+    else:
+        print("Invalid command. Please try again.")
 
 
 print("Type help to get information about commands")
