@@ -2,28 +2,11 @@ from graphviz import Digraph
 from importlib import reload
 from redis_proxy import get_connection
 from graph_init import create_graph
+from visualize import updateAndCreateDgraph
 from spotify_interface import process_metadata, display_art
 from create_nodes import CreateTrackNode, CreateArtistNode, CreateAlbumNode
 from create_edges import createAlbumEdge, createTrackEdge, createArtistEdge
 
-
-spotify_graph = Digraph(comment='Visualization of the redis graph', format='svg')
-spotify_graph.graph_attr['rankdir'] = 'LR'
-
-def add_nodes_digraph():
-    meta_dict = process_metadata.get_meta_dict()
-    spotify_graph.node(meta_dict['track'], meta_dict['track'])
-    spotify_graph.node(meta_dict['album'], meta_dict['album'])
-    spotify_graph.node(meta_dict['artist'], meta_dict['artist'])
-
-def add_edges_digraph():
-    meta_dict = process_metadata.get_meta_dict()
-    spotify_graph.edge(meta_dict['track'], meta_dict['album'])
-    spotify_graph.edge(meta_dict['album'], meta_dict['track'])
-    spotify_graph.edge(meta_dict['track'], meta_dict['artist'])
-    spotify_graph.edge(meta_dict['artist'], meta_dict['track'])
-    spotify_graph.edge(meta_dict['album'], meta_dict['artist'])
-    spotify_graph.edge(meta_dict['artist'], meta_dict['album'])
     
 def process_result_set(result):
     for subset in result.result_set:
@@ -137,11 +120,7 @@ class Update:
         self.updateArtistEdges()
         self.updateAlbumEdges()
 
-    def updateDgraph(self):
-        add_edges_digraph()
-        add_nodes_digraph()
-
-
+   
 def help():
     print("Fetch all song metadata - GET songs")
     print("Fetch all album metadata - GET albums")
@@ -185,7 +164,6 @@ def driver_func(inp):
         update_obj = Update()
         update_obj.update_all_nodes()
         update_obj.update_all_edges()
-        update_obj.updateDgraph()
     else:
         print("Invalid command. Please try again.")
 
@@ -202,8 +180,6 @@ while True:
         reload(process_metadata)
         driver_func("update")
     elif query=="show graph": 
-        f = open('graph.svg', 'a')
-        f.write(spotify_graph.pipe().decode('utf-8'))
-        f.close()
+        updateAndCreateDgraph()
     else:
         driver_func(query)
