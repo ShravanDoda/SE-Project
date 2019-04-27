@@ -9,6 +9,7 @@ In order to get started you'll need to install the dependencies by creating a vi
 Follow the commands given below
 
 ```bash
+git clone git@github.com/ShravanDoda/SE-Project.git
 cd SE-Project
 python3 -m venv venv
 source venv/bin/activate
@@ -22,6 +23,7 @@ docker run -p 6379:6379 -it --rm redislabs/redisgraph
 ```
 
 Once the server is up, you can run the project in a new terminal instance using the steps below ->
+PS: Before running the project, that spotify is up and running.
 
 ```bash
 cd tobie
