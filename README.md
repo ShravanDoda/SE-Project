@@ -23,7 +23,7 @@ docker run -p 6379:6379 -it --rm redislabs/redisgraph
 ```
 
 Once the server is up, you can run the project in a new terminal instance using the steps below ->
-PS: Before running the project, that spotify is up and running.
+PS: Before running the project, ensure that spotify is up and running.
 
 ```bash
 cd tobie
