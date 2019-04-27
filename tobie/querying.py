@@ -10,11 +10,13 @@ from create_edges import createAlbumEdge, createTrackEdge, createArtistEdge
 spotify_graph = Digraph(comment='Visualization of the redis graph', format='svg')
 spotify_graph.graph_attr['rankdir'] = 'LR'
 
+
 def add_nodes_digraph():
     meta_dict = process_metadata.get_meta_dict()
     spotify_graph.node(meta_dict['track'], meta_dict['track'])
     spotify_graph.node(meta_dict['album'], meta_dict['album'])
     spotify_graph.node(meta_dict['artist'], meta_dict['artist'])
+
 
 def add_edges_digraph():
     meta_dict = process_metadata.get_meta_dict()
@@ -24,11 +26,13 @@ def add_edges_digraph():
     spotify_graph.edge(meta_dict['artist'], meta_dict['track'], 'artist-track')
     spotify_graph.edge(meta_dict['album'], meta_dict['artist'], 'album-artist')
     spotify_graph.edge(meta_dict['artist'], meta_dict['album'], 'artist-album')
-    
+
+
 def process_result_set(result):
     for subset in result.result_set:
         for item in range(len(subset)):
             subset[item] = subset[item].decode('utf-8')
+
 
 class queryFacade:
     def __init__(self):
@@ -151,6 +155,7 @@ def help():
     print("Fetch artist by track - GET artist by track")
     print("Fetch all albums by an artist - GET albums by artist")
     print("Fetch artist by album - GET artist by album")
+    print("Create graph.svg file - show graph")
 
 def driver_func(inp):
     if inp.strip().lower() == "get songs":
@@ -200,7 +205,7 @@ while True:
     elif query=="update":
         reload(process_metadata)
         driver_func("update")
-    elif query=="show graph": 
+    elif query=="show graph":
         f = open('graph.svg', 'w')
         f.write(spotify_graph.pipe().decode('utf-8'))
         f.close()
